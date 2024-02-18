@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    tools{
+        maven "maven-3"
+    }
+
+    stages {
+        stage('github checking') {
+            steps {
+                git credentialsId: 'ssh-jenkins', url: 'https://github.com/avk025/maven-web-application.git'
+                                }
+        }
+        stage('maven build') {
+            steps {
+                sh "mvn clean package"
+                          }
+        }
+        stage('sonar analysis') {
+            steps {
+                sh "mvn clean sonar:sonar"
+                          }
+        }
+         stage('nexus deploy') {
+            steps {
+                sh "mvn clean deploy"
+                          }                          
+        
+                }
+    }
+ }
