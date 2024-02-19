@@ -24,7 +24,10 @@ pipeline {
             steps {
                 sh "mvn clean deploy"
                           }                          
-        
-                }
+                                }
+     stage('build Image'){
+          steps {
+                   sh "docker build -t avk5551/maven-application:${BUILD_NUMBER} . " 
+                   sh "docker push avk5551/application:${BUILD_NUMBER}"
     }
  }
