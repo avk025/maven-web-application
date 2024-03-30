@@ -18,6 +18,10 @@ pipeline {
             steps {
                sh "mvn clean sonar:sonar" // building the analysis of code with sonarqube by passsing the details in pom.xml.
         }
+       stage('nexus deploy') {
+            steps {
+                sh "mvn clean deploy"  // storing the artifact to the nexus repo and maintiang the details in pom.xml
+                          }
         stage('Docker Build') {
             steps {
               sh ''' sudo chown -R jenkins:jenkins /var/run/docker.sock // giving the set of permission to jenkins user to have the docker commands to run for jnkeins user.
