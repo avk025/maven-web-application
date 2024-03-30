@@ -42,4 +42,11 @@ pipeline {
                }
             }
         }
+     post {  //Post build actions
+        always {
+            emailext body: '''The build of the present job is:
+
+                           ${BUILD_URL}-${BUILD_STATUS}''', subject: '${BUILD_NUMBER}-${BUILD_STATUS}', to: 'vamshi848@gmail.com'
+        }
+    }
 }
