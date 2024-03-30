@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+  tools{
+      maven "maven-3.9"   //declaring the tools
+  }
+    stages {
+        stage('github checkout') {
+            steps {
+                git credentialsId: 'jenkins-private', url: 'git@github.com:avk025/maven-web-application.git'   //getting the code from git repo.
+            }
+        }
+        stage('maven Build') {
+            steps {
+               sh "mvn clean package" // building the code to a package .
+            }
+        }
+       stage('Sonar Build') {
+            steps {
+               sh "mvn clean sonar:sonar" // building the analysis of code with sonarqube by passsing the details in pom.xml.
+        }
+        stage('Docker Build') {
+            steps {
+              sh ''' sudo chown -R jenkins:jenkins /var/run/docker.sock // giving the set of permission to jenkins user to have the docker commands to run for jnkeins user.
+              docker build -t avk5551/project:${BUILD_NUMBER} .''' // Building the image 
+               }
+            }
+        stage('Docker Push') {
+            steps {
+              withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'Password', usernameVariable: 'userName')]) {
+                              sh "docker login -u ${userName} -p ${Password}" // logging into the docker hub to push
+                              sh "docker push avk5551/project:${BUILD_NUMBER}" //pushing docker image to hub
+                                                   }
+               }
+            }
+        stage('K8s Deploy') {
+            steps {
+              sh "kubectl apply -f mavenwebappdeployment.yaml" //Deploying the file in k8s.
+               }
+            }
+        }
+}
