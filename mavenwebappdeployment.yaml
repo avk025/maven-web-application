@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: mavenwebappcontainer
-          image: avk5551/project:${BUILD_NUMBER}
+          image: avk5551/project:6
           ports:
             - containerPort: 8080
           resources:
